@@ -29,6 +29,8 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="products")
     price = models.DecimalField(max_digits=10, decimal_places=2)  
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)  
+    weight = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    in_stock = models.PositiveIntegerField(default=0)
     slug = models.SlugField(max_length=255, unique=True, blank=True)  # Slug is auto-generated if blank
     is_featured = models.BooleanField(default=False)
     is_best_seller=models.BooleanField(default=False)

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Category, Product, ProductImage,Order,OrderItem
+from products.models import Product
 from django.conf import settings
 import os
 
@@ -22,7 +23,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'slug', 'description','features', 'price','sale_price', 'category', 'is_featured', 'images', 'featured_image']
+        fields = ['id', 'name', 'slug', 'description','features', 'price','sale_price','weight', 'in_stock', 'category', 'is_featured', 'images', 'featured_image']
 
     def get_featured_image(self, obj):
         """Get the featured image URL if available."""
