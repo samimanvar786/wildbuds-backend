@@ -15,8 +15,7 @@ staticfiles/
 media/
 
 # Django secrets & env
-.env
-.env.*
+
 !.env.example
 
 # =========================
