@@ -15,8 +15,9 @@ from dotenv import load_dotenv
 import os
 import pymysql 
 from datetime import timedelta
-
+from decouple import Config, RepositoryEnv
 pymysql.install_as_MySQLdb()
+
 
 # Load .env file
 load_dotenv()
@@ -27,16 +28,36 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
 
+# =========================
+# LOAD ENV FILE
+# =========================
+config = Config(
+    RepositoryEnv(BASE_DIR / ".env.dev")
+)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-8t)86u=@-ykl2@%0ni^&iwrz&@4ep@2_6ljbd)15ea^^v227*i'
+#SECRET_KEY = 'django-insecure-8t)86u=@-ykl2@%0ni^&iwrz&@4ep@2_6ljbd)15ea^^v227*i'
+
+# =========================
+# SECURITY
+# =========================
+SECRET_KEY = config(
+    "SECRET_KEY",
+    default="django-insecure-8t)86u=@-ykl2@%0ni^&iwrz&@4ep@2_6ljbd)15ea^^v227*i"
+)
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config(
+    "DEBUG",
+    cast=bool,
+    default=False
+)
 
-ALLOWED_HOSTS = ["wildbuds.in", "www.wildbuds.in", "127.0.0.1"]
+ALLOWED_HOSTS = ["wildbuds.in", "www.wildbuds.in", "127.0.0.1", "localhost"]
 STATIC_ROOT = BASE_DIR / "static"
 
 # Application definition
@@ -100,15 +121,16 @@ DATABASES = {
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
     
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',  # Use MySQL as the database engine
-        'NAME': 'ojgramco_ojgram',             # Replace with your database name
-        'USER': 'root',                       # Replace with your MySQL username
-        'PASSWORD': 'Envigo@123',            # Replace with your MySQL password
-        'HOST': 'localhost',                  # Replace with your MySQL host (e.g., localhost or IP)
-        'PORT': '3306',                       # Replace with your MySQL port (default is 3306)
+   'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT',cast=int),
         'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",  # Optional but recommended
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4',
         },
     }
 }
@@ -157,13 +179,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # MEDIA_URL = '/media/'
 # MEDIA_ROOT = BASE_DIR / 'media'
-SITE_URL = 'http://localhost:8000'
+SITE_URL = config(
+    "SITE_URL",
+    default="http://localhost:8000"
+)
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React frontend
-]
+CORS_ALLOWED_ORIGINS = config(
+    "CORS_ALLOWED_ORIGINS",
+    default="http://localhost:3000",
+    cast=lambda v: [i.strip() for i in v.split(",")]
+)
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
