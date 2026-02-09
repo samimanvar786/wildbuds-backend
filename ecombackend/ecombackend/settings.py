@@ -19,21 +19,30 @@ from decouple import Config, RepositoryEnv
 pymysql.install_as_MySQLdb()
 
 
-# Load .env file
-load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
-RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
+config = Config(RepositoryEnv(BASE_DIR / ".env.dev"))
+SECRET_KEY = config("SECRET_KEY")
 
+
+# Load .env file
+# load_dotenv()
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# BASE_DIR = Path(__file__).resolve().parent.parent
+
+RAZORPAY_KEY_ID = config("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = config("RAZORPAY_KEY_SECRET")
+
+print( "RAZORPAY_KEY_ID 12=",RAZORPAY_KEY_ID)
+print("RAZORPAY_KEY_SECRET 12=",RAZORPAY_KEY_SECRET)
 # =========================
 # LOAD ENV FILE
 # =========================
-config = Config(
-    RepositoryEnv(BASE_DIR / ".env.dev")
-)
+
+print("DEBUG =", config("DEBUG", default="NOT SET"))
+print("DB_USER =", config("DB_USER", default="NOT SET"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -58,7 +67,7 @@ DEBUG = config(
 )
 
 ALLOWED_HOSTS = ["wildbuds.in", "www.wildbuds.in", "127.0.0.1", "localhost"]
-STATIC_ROOT = BASE_DIR / "static"
+#STATIC_ROOT = BASE_DIR / "static"
 
 # Application definition
 
@@ -170,8 +179,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+#STATIC_URL = 'static/'
+STATIC_URL = "/static/"
 
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
